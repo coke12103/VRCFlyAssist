@@ -22,7 +22,6 @@ public class FlyAssistGUI : EditorWindow
   private static readonly string[] GestureTypes = { "0. Neutral", "1. Fist", "2. Open", "3. Point", "4. Victory", "5. Rock", "6. Gun", "7. ThumbsUp" };
 
   // デフォルト値
-  private const string param_name = "FlyCollider";
   private const string root = "Assets/coke12103/FlyAssist";
 
   private const string default_fx_path = "Assets/VRCSDK/Examples3/Animation/Controllers/vrc_AvatarV3HandsLayer.controller";
@@ -32,6 +31,8 @@ public class FlyAssistGUI : EditorWindow
   private const int fx_index = 4;
 
   // 調整値
+  private string param_name = "FlyCollider";
+  private string ex_menu_name = "Fly";
   private int hand_num;
   private int gesture_num;
 
@@ -53,6 +54,9 @@ public class FlyAssistGUI : EditorWindow
 
     // そもそもAvatarがなければ無効化する
     EditorGUI.BeginDisabledGroup(target_avatar == null);
+      EditorGUILayout.Space();
+      param_name = EditorGUILayout.TextField("Parameter name", param_name);
+      ex_menu_name = EditorGUILayout.TextField("Ex menu name", ex_menu_name);
       hand_num = EditorGUILayout.Popup("Hand", hand_num, HandTypes);
       gesture_num = EditorGUILayout.Popup("Gesture", gesture_num, GestureTypes);
 
@@ -277,7 +281,7 @@ public class FlyAssistGUI : EditorWindow
 
     int i = 0;
     while(i < ex_menu.controls.Count){
-      if(ex_menu.controls[i].name == param_name){
+      if(ex_menu.controls[i].name == ex_menu_name){
         Debug.Log("Removed: " + ex_menu.controls[i].name);
         ex_menu.controls.RemoveAt(i);
         continue;
@@ -336,6 +340,7 @@ public class FlyAssistGUI : EditorWindow
 
     cube.transform.position = target_avatar.gameObject.transform.position;
     cube.transform.parent = target_avatar.gameObject.transform;
+    cube.name = param_name;
   }
 
   void CreateAndBuildAnimation(){
@@ -388,7 +393,7 @@ public class FlyAssistGUI : EditorWindow
   void CreateExMenu(){
     ExpressionsMenu ex_menu = target_avatar.expressionsMenu;
 
-    ExpressionsControl toggle_control = CreateExControl("Fly", ExpressionsControl.ControlType.Toggle, param_name, 1);
+    ExpressionsControl toggle_control = CreateExControl(ex_menu_name, ExpressionsControl.ControlType.Toggle, param_name, 1);
     ex_menu.controls.Add(toggle_control);
   }
 
